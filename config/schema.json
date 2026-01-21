@@ -1,0 +1,23 @@
+{
+  "columns": {
+    "customer_id": {
+      "type": "int",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "order_date": {
+      "type": "date",
+      "format": "%Y-%m-%d",
+      "parse_formats": ["%Y-%m-%d", "%d-%m-%Y", "%Y/%m/%d"],
+      "required": true
+    },
+    "order_amount": {
+      "type": "float",
+      "required": true,
+      "min": 0
+    }
+  }
+}

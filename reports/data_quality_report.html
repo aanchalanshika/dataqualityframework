@@ -1,0 +1,56 @@
+
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <title>Data Quality Report</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 24px; }
+      .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+      .card { padding: 12px; border: 1px solid #ddd; border-radius: 8px; }
+      table { border-collapse: collapse; width: 100%; }
+      th, td { border: 1px solid #ddd; padding: 8px; }
+      th { background: #f6f6f6; }
+    </style>
+  </head>
+  <body>
+    <h1>Data Quality Report</h1>
+    <p><strong>Source:</strong> data/rawdata.csv | <strong>Generated:</strong> 2026-01-21 11:28:41</p>
+    <div class="cards">
+      <div class="card"><strong>Total Rows:</strong><br/>3</div>
+      <div class="card"><strong>Valid Rows:</strong><br/>1</div>
+      <div class="card"><strong>Invalid Rows:</strong><br/>2</div>
+      <div class="card"><strong>GE Expectations:</strong><br/>6/9 passed</div>
+    </div>
+    <h2>Invalid Records</h2>
+    <table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>customer_id</th>
+      <th>name</th>
+      <th>order_date</th>
+      <th>order_amount</th>
+      <th>is_valid</th>
+      <th>errors</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>102.0</td>
+      <td>Bob</td>
+      <td>2024-01-15</td>
+      <td>NaN</td>
+      <td>False</td>
+      <td>order_amount is required</td>
+    </tr>
+    <tr>
+      <td>NaN</td>
+      <td>Charlie</td>
+      <td>2024-01-20</td>
+      <td>300.0</td>
+      <td>False</td>
+      <td>customer_id is required</td>
+    </tr>
+  </tbody>
+</table>
+  </body>
+</html>

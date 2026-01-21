@@ -1,0 +1,4 @@
+customer_id,name,order_date,order_amount
+101,Alice,2024-01-15,250.50
+102,Bob,15-01-2024,abc
+,Charlie,2024/01/20,300
