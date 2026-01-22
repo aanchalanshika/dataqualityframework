@@ -1,15 +1,15 @@
 import json
-import os
+import os  #use to create forlder or directory which we use to store data 
 from datetime import datetime
 
 import pandas as pd
 
-from standardizer import standardize_data
+from standardizer import standardize_data # importing our own created function
 from validator import validate_data
 
 
 def load_schema(path: str) -> dict:
-	with open(path, "r", encoding="utf-8") as f:
+	with open(path, "r", encoding="utf-8") as f:  #here utf8 makes sures that all type of characters are read properly plus this function reads the json schema properly+ here the "R" stands for read mode which makes sure that it will only read the file and not write on it 
 		return json.load(f)
 
 

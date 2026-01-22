@@ -11,8 +11,33 @@ from validator import validate_data
 with open("config/schema.json", "r", encoding="utf-8") as f:
     schema = json.load(f)
 
-# Load data (correct filename)
-df = pd.read_csv("data/rawdata.csv")
+# Get CSV filename from user
+print("=" * 60)
+print("   DATA QUALITY FRAMEWORK")
+print("=" * 60)
+filename = input("\nEnter CSV file name (inside data folder): ").strip()
+
+# Add .csv extension if not provided
+if not filename.endswith('.csv'):
+    filename += '.csv'
+
+# Construct full path
+csv_path = os.path.join("data", filename)
+
+# Check if file exists
+if not os.path.exists(csv_path):
+    print(f"\n❌ Error: File '{csv_path}' not found!")
+    print(f"   Available files in data folder:")
+    if os.path.exists("data"):
+        for file in os.listdir("data"):
+            if file.endswith('.csv'):
+                print(f"   - {file}")
+    exit(1)
+
+print(f"\n✓ Loading: {csv_path}")
+
+# Load data
+df = pd.read_csv(csv_path)
 
 # Standardize data (now requires schema)
 df_standardized = standardize_data(df, schema)
@@ -253,7 +278,7 @@ html = f"""
     <div class="container">
       <h1>📊 Data Quality Report</h1>
       <div class="meta">
-        <strong>Source:</strong> data/rawdata.csv | <strong>Generated:</strong> {timestamp}
+        <strong>Source:</strong> {csv_path} | <strong>Generated:</strong> {timestamp}
       </div>
       
       <div class="cards">
@@ -291,5 +316,7 @@ with open("reports/data_quality_report.html", "w", encoding="utf-8") as f:
     f.write(html)
 
 print("✅ Data Quality Pipeline Executed Successfully")
+print(f"   Source: {csv_path}")
 print(f"   Total: {total} | Valid: {valid} | Invalid: {invalid}")
 print(f"   Report: reports/data_quality_report.html")
+print("\n" + "=" * 60)
