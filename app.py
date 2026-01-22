@@ -397,18 +397,258 @@ if st.button("🚀 Run Quality Check"):
 
         os.makedirs("reports", exist_ok=True)
         report_name = f"data_quality_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         html_report = f"""
-        <html>
-        <head><title>Data Quality Report</title></head>
-        <body style="font-family:Arial;">
-            <h1>Data Quality Report</h1>
-            <p><b>Source:</b> {uploaded_file.name}</p>
-            <p><b>Total Rows:</b> {total_rows}</p>
-            <p><b>Valid Rows:</b> {valid_rows}</p>
-            <p><b>Invalid Rows:</b> {invalid_rows}</p>
-            <h2>Invalid Records</h2>
-            {invalid_df.to_html(index=False) if invalid_rows > 0 else "<p>No invalid rows</p>"}
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Data Quality Report</title>
+            <style>
+                @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+                
+                * {{
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }}
+                
+                body {{
+                    font-family: 'Poppins', sans-serif;
+                    background: linear-gradient(135deg, #1e3a8a 0%, #312e81 50%, #1e293b 100%);
+                    min-height: 100vh;
+                    padding: 2rem;
+                    color: #333;
+                }}
+                
+                .container {{
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    background: white;
+                    border-radius: 20px;
+                    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                    overflow: hidden;
+                    animation: fadeIn 0.8s ease-out;
+                }}
+                
+                @keyframes fadeIn {{
+                    from {{ opacity: 0; transform: translateY(20px); }}
+                    to {{ opacity: 1; transform: translateY(0); }}
+                }}
+                
+                .header {{
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    padding: 3rem 2rem;
+                    color: white;
+                    text-align: center;
+                }}
+                
+                .header h1 {{
+                    font-size: 2.5rem;
+                    font-weight: 700;
+                    margin-bottom: 0.5rem;
+                }}
+                
+                .header .subtitle {{
+                    font-size: 1rem;
+                    opacity: 0.9;
+                }}
+                
+                .info-section {{
+                    padding: 2rem;
+                    background: #f8fafc;
+                    border-bottom: 1px solid #e2e8f0;
+                }}
+                
+                .info-grid {{
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 1rem;
+                }}
+                
+                .info-item {{
+                    padding: 1rem;
+                    background: white;
+                    border-radius: 8px;
+                    border-left: 4px solid #667eea;
+                }}
+                
+                .info-label {{
+                    font-weight: 600;
+                    color: #64748b;
+                    font-size: 0.85rem;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }}
+                
+                .info-value {{
+                    font-size: 1.2rem;
+                    color: #1e293b;
+                    margin-top: 0.25rem;
+                }}
+                
+                .metrics {{
+                    display: grid;
+                    grid-template-columns: repeat(4, 1fr);
+                    gap: 1.5rem;
+                    padding: 2rem;
+                }}
+                
+                .metric-card {{
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    padding: 2rem;
+                    border-radius: 12px;
+                    color: white;
+                    text-align: center;
+                    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+                    transition: transform 0.3s ease;
+                }}
+                
+                .metric-card:hover {{
+                    transform: translateY(-5px);
+                }}
+                
+                .metric-label {{
+                    font-size: 0.9rem;
+                    opacity: 0.9;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                    margin-bottom: 0.5rem;
+                }}
+                
+                .metric-value {{
+                    font-size: 2.5rem;
+                    font-weight: 700;
+                }}
+                
+                .content {{
+                    padding: 2rem;
+                }}
+                
+                .section-title {{
+                    font-size: 1.5rem;
+                    font-weight: 600;
+                    color: #1e293b;
+                    margin-bottom: 1.5rem;
+                    padding-bottom: 0.5rem;
+                    border-bottom: 3px solid #667eea;
+                }}
+                
+                table {{
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 1rem;
+                    background: white;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                }}
+                
+                thead {{
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                }}
+                
+                th {{
+                    color: white;
+                    padding: 1rem;
+                    text-align: left;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    font-size: 0.85rem;
+                    letter-spacing: 0.5px;
+                }}
+                
+                td {{
+                    padding: 1rem;
+                    border-bottom: 1px solid #e2e8f0;
+                    color: #475569;
+                }}
+                
+                tr:hover {{
+                    background: #f8fafc;
+                }}
+                
+                tr:last-child td {{
+                    border-bottom: none;
+                }}
+                
+                .no-data {{
+                    text-align: center;
+                    padding: 3rem;
+                    color: #64748b;
+                    font-size: 1.1rem;
+                }}
+                
+                .success-badge {{
+                    background: #10b981;
+                    color: white;
+                    padding: 0.5rem 1rem;
+                    border-radius: 20px;
+                    display: inline-block;
+                    font-weight: 600;
+                }}
+                
+                .footer {{
+                    text-align: center;
+                    padding: 2rem;
+                    background: #f8fafc;
+                    color: #64748b;
+                    font-size: 0.9rem;
+                    border-top: 1px solid #e2e8f0;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>📊 Data Quality Report</h1>
+                    <p class="subtitle">Comprehensive analysis and validation results</p>
+                </div>
+                
+                <div class="info-section">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Source File</div>
+                            <div class="info-value">{uploaded_file.name}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Generated On</div>
+                            <div class="info-value">{timestamp}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="metrics">
+                    <div class="metric-card">
+                        <div class="metric-label">Total Rows</div>
+                        <div class="metric-value">{total_rows}</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Valid Rows</div>
+                        <div class="metric-value">{valid_rows}</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Invalid Rows</div>
+                        <div class="metric-value">{invalid_rows}</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Validation Score</div>
+                        <div class="metric-value">{passed}/{total_exp}</div>
+                    </div>
+                </div>
+                
+                <div class="content">
+                    <h2 class="section-title">{"✅ All Records Valid" if invalid_rows == 0 else "❌ Invalid Records"}</h2>
+                    {f'<div class="no-data"><span class="success-badge">🎉 Congratulations! All {total_rows} records passed validation</span></div>' if invalid_rows == 0 else invalid_df.to_html(index=False, classes="data-table")}
+                </div>
+                
+                <div class="footer">
+                    <p>Generated by Data Quality Framework • Powered by Python & Pandas</p>
+                    <p style="margin-top: 0.5rem; opacity: 0.7;">© {datetime.now().year} • Professional Data Validation</p>
+                </div>
+            </div>
         </body>
         </html>
         """
